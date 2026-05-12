@@ -13,7 +13,7 @@ const PUBLIC_GET_ROUTES = [
 ];
 
 export async function middleware(req: NextRequest) {
-  const { pathname, method } = req.nextUrl;
+  const { pathname } = req.nextUrl;
   const reqMethod = req.method;
 
   const token = await getToken({
