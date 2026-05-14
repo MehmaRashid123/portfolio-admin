@@ -56,7 +56,11 @@ export async function middleware(req: NextRequest) {
       pathname.startsWith('/api/setup') ||
       reqMethod === 'OPTIONS'
     ) {
-      return NextResponse.next();
+      const res = NextResponse.next();
+      res.headers.set('Access-Control-Allow-Origin', '*');
+      res.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      res.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      return res;
     }
 
     // Allow public GET requests (frontend reads)
@@ -65,7 +69,11 @@ export async function middleware(req: NextRequest) {
       PUBLIC_GET_ROUTES.some((route) => pathname.startsWith(route));
 
     if (isPublicGet) {
-      return NextResponse.next();
+      const res = NextResponse.next();
+      res.headers.set('Access-Control-Allow-Origin', '*');
+      res.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+      res.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+      return res;
     }
 
     // Everything else requires login
