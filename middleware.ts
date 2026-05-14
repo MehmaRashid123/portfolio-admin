@@ -50,8 +50,12 @@ export async function middleware(req: NextRequest) {
 
   // ── /api routes ──────────────────────────────────────────────────────────
   if (pathname.startsWith('/api/')) {
-    // Always allow: auth + setup
-    if (pathname.startsWith('/api/auth') || pathname.startsWith('/api/setup')) {
+    // Always allow: auth + setup + OPTIONS preflight
+    if (
+      pathname.startsWith('/api/auth') ||
+      pathname.startsWith('/api/setup') ||
+      reqMethod === 'OPTIONS'
+    ) {
       return NextResponse.next();
     }
 
