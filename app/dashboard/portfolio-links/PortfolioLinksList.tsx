@@ -30,7 +30,7 @@ interface PortfolioLink {
   createdAt: string;
 }
 
-const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000';
+const FRONTEND_URL = (process.env.NEXT_PUBLIC_FRONTEND_URL || '').replace(/\/$/, '');
 
 function timeAgo(dateStr?: string): string {
   if (!dateStr) return 'Never';
