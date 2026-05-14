@@ -39,7 +39,7 @@ interface SiteSettings {
   about: { heroHeading: string; heroSubheading: string; story: string; mission: string; foundedYear: string; heroImage: { url: string; publicId: string } | null; values: Value[]; toolsLabel: string; tools: string[] };
   contact: { heading: string; subheading: string; email: string; whatsapp: string; location: string; instagram: string; behance: string; linkedin: string; formSuccessMessage: string; serviceOptions: string[]; budgetOptions: string[] };
   blogPage: { heading: string; subheading: string };
-  seo: { siteTitle: string; metaDescription: string; ogImage: string; twitterHandle: string };
+  frontendUrl: string;
 }
 
 const DEFAULT: SiteSettings = {
@@ -60,6 +60,7 @@ const DEFAULT: SiteSettings = {
   contact: { heading: '', subheading: '', email: '', whatsapp: '', location: '', instagram: '', behance: '', linkedin: '', formSuccessMessage: '', serviceOptions: [], budgetOptions: [] },
   blogPage: { heading: '', subheading: '' },
   seo: { siteTitle: '', metaDescription: '', ogImage: '', twitterHandle: '' },
+  frontendUrl: '',
 };
 
 // ─── Section wrapper ────────────────────────────────────────────────────────
@@ -369,6 +370,22 @@ export default function SettingsManager() {
           <Input label="OG Image URL" value={s.seo.ogImage} onChange={e => uNested('seo', 'ogImage', e.target.value)} />
           <Input label="Twitter Handle" value={s.seo.twitterHandle} onChange={e => uNested('seo', 'twitterHandle', e.target.value)} placeholder="@agency" />
           <Button variant="primary" loading={saving === 'seo'} onClick={() => save('seo', s.seo)}>Save SEO</Button>
+        </Section>
+
+        {/* ── Frontend URL ── */}
+        <Section title="Frontend / Portfolio URL" id="frontendUrl" open={open === 'frontendUrl'} onToggle={toggle}>
+          <p className="text-xs text-[var(--text-secondary)]">
+            The public URL of your portfolio site. Used to generate shareable portfolio links.
+          </p>
+          <Input
+            label="Frontend URL"
+            value={s.frontendUrl}
+            onChange={e => u('frontendUrl', e.target.value)}
+            placeholder="https://your-portfolio.vercel.app"
+          />
+          <Button variant="primary" loading={saving === 'frontendUrl'} onClick={() => save('frontendUrl', s.frontendUrl)}>
+            Save
+          </Button>
         </Section>
 
       </div>

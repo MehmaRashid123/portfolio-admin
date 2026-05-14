@@ -46,13 +46,13 @@ function timeAgo(dateStr?: string): string {
   return `${months} month${months !== 1 ? 's' : ''} ago`;
 }
 
-function CopyButton({ slug }: { slug: string }) {
+function CopyButton({ slug, frontendUrl }: { slug: string; frontendUrl: string }) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    const url = `${FRONTEND_URL}/portfolio/${slug}`;
+    const url = `${frontendUrl}/portfolio/${slug}`;
     await navigator.clipboard.writeText(url);
     setCopied(true);
     toast('Link copied to clipboard', 'success');
@@ -77,13 +77,21 @@ export default function PortfolioLinksList() {
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [frontendUrl, setFrontendUrl] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/portfolio-links');
-      const data = await res.json();
-      if (data.success) setLinks(data.data);
+      const [linksRes, settingsRes] = await Promise.all([
+        fetch('/api/portfolio-links'),
+        fetch('/api/settings'),
+      ]);
+      const linksData = await linksRes.json();
+      const settingsData = await settingsRes.json();
+      if (linksData.success) setLinks(linksData.data);
+      if (settingsData.success && settingsData.data?.frontendUrl) {
+        setFrontendUrl(settingsData.data.frontendUrl.replace(/\/$/, ''));
+      }
     } finally {
       setLoading(false);
     }
@@ -122,7 +130,7 @@ export default function PortfolioLinksList() {
       header: 'URL',
       render: (row) => (
         <span className="font-mono text-xs text-[var(--text-muted)]">
-          {FRONTEND_URL}/portfolio/
+          {frontendUrl}/portfolio/
           <span className="text-[var(--accent)]">{row.slug}</span>
         </span>
       ),
@@ -171,7 +179,7 @@ export default function PortfolioLinksList() {
       header: 'Actions',
       render: (row) => (
         <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-          <CopyButton slug={row.slug} />
+          <CopyButton slug={row.slug} frontendUrl={frontendUrl} />
           <button
             onClick={() => router.push(`/dashboard/portfolio-links/${row._id}`)}
             title="Edit"
@@ -180,7 +188,7 @@ export default function PortfolioLinksList() {
             <Pencil size={14} />
           </button>
           <a
-            href={`${FRONTEND_URL}/portfolio/${row.slug}`}
+            href={`${frontendUrl}/portfolio/${row.slug}`}
             target="_blank"
             rel="noopener noreferrer"
             title="Open in new tab"

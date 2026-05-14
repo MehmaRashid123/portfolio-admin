@@ -242,6 +242,9 @@ const SettingsSchema = new Schema({
     ogImage: String,
     twitterHandle: String,
   },
+
+  // ── Frontend URL ──
+  frontendUrl: { type: String, default: '' },
 });
 
 // ─── User ──────────────────────────────────────────────────────────────────

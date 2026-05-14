@@ -29,8 +29,6 @@ interface PortfolioLinkData {
   isActive: boolean;
 }
 
-const FRONTEND_URL = (process.env.NEXT_PUBLIC_FRONTEND_URL || '').replace(/\/$/, '');
-
 function slugify(str: string) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
@@ -47,6 +45,7 @@ export default function PortfolioLinkForm({ linkId }: { linkId?: string }) {
   const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [categoryFilters, setCategoryFilters] = useState<{ slug: string; label: string }[]>([]);
+  const [frontendUrl, setFrontendUrl] = useState('');
   const [slugStatus, setSlugStatus] = useState<'idle' | 'checking' | 'available' | 'taken' | 'invalid'>('idle');
   const [saving, setSaving] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -63,11 +62,18 @@ export default function PortfolioLinkForm({ linkId }: { linkId?: string }) {
       .then((d) => { if (d.success) setAllProjects(d.data); });
   }, []);
 
-  // Load categories
+  // Load categories + frontendUrl from settings
   useEffect(() => {
     fetch('/api/categories')
       .then((r) => r.json())
       .then((d) => { if (d.success) setCategoryFilters(d.data); });
+    fetch('/api/settings')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success && d.data?.frontendUrl) {
+          setFrontendUrl(d.data.frontendUrl.replace(/\/$/, ''));
+        }
+      });
   }, []);
 
   // Load existing link on edit
@@ -150,7 +156,7 @@ export default function PortfolioLinkForm({ linkId }: { linkId?: string }) {
       if (!data.success) throw new Error(data.error);
 
       if (copyAfter) {
-        await navigator.clipboard.writeText(`${FRONTEND_URL}/portfolio/${slug}`);
+        await navigator.clipboard.writeText(`${frontendUrl}/portfolio/${slug}`);
         toast('Saved and link copied!', 'success');
       } else {
         toast(isEdit ? 'Link updated' : 'Link created', 'success');
@@ -203,7 +209,7 @@ export default function PortfolioLinkForm({ linkId }: { linkId?: string }) {
     <div>
       <PageHeader
         title={isEdit ? 'Edit Portfolio Link' : 'Create Portfolio Link'}
-        description={isEdit ? `Editing: ${FRONTEND_URL}/portfolio/${slug}` : 'Create a shareable link with selected projects'}
+        description={isEdit ? `Editing: ${frontendUrl}/portfolio/${slug}` : 'Create a shareable link with selected projects'}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -258,7 +264,7 @@ export default function PortfolioLinkForm({ linkId }: { linkId?: string }) {
               {hint && <p className={`text-xs ${hint.color}`}>{hint.text}</p>}
               {slug && (
                 <p className="text-xs font-mono">
-                  <span className="text-[var(--text-muted)]">{FRONTEND_URL}/portfolio/</span>
+                  <span className="text-[var(--text-muted)]">{frontendUrl}/portfolio/</span>
                   <span className="text-[var(--accent)]">{slug}</span>
                 </p>
               )}
@@ -420,7 +426,7 @@ export default function PortfolioLinkForm({ linkId }: { linkId?: string }) {
                 <div className="flex-1 bg-[#111] rounded px-2 py-1 flex items-center gap-1.5">
                   <Globe size={10} className="text-[var(--text-muted)]" />
                   <span className="text-[10px] font-mono text-[var(--text-muted)] truncate">
-                    {FRONTEND_URL}/portfolio/
+                    {frontendUrl}/portfolio/
                     <span className="text-[var(--accent)]">{slug || '...'}</span>
                   </span>
                 </div>
