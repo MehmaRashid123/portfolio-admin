@@ -39,6 +39,7 @@ interface SiteSettings {
   about: { heroHeading: string; heroSubheading: string; story: string; mission: string; foundedYear: string; heroImage: { url: string; publicId: string } | null; values: Value[]; toolsLabel: string; tools: string[] };
   contact: { heading: string; subheading: string; email: string; whatsapp: string; location: string; instagram: string; behance: string; linkedin: string; formSuccessMessage: string; serviceOptions: string[]; budgetOptions: string[] };
   blogPage: { heading: string; subheading: string };
+  seo: { siteTitle: string; metaDescription: string; ogImage: string; twitterHandle: string };
   frontendUrl: string;
 }
 
