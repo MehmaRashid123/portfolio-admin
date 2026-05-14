@@ -6,6 +6,14 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
   },
+
+  // Raise the body size limit for the upload API route (Vercel default is 4.5MB)
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '20mb',
+    },
+  },
+
   async headers() {
     return [
       {

@@ -172,12 +172,12 @@ export default function DashboardHome({ userName }: { userName: string }) {
                 Add Blog Post
               </Button>
             </Link>
-            <Link href="/dashboard/team/new">
+            <Link href="/dashboard/team">
               <Button variant="secondary" className="w-full justify-start" icon={<Plus size={14} />}>
                 Add Team Member
               </Button>
             </Link>
-            <Link href="/dashboard/testimonials/new">
+            <Link href="/dashboard/testimonials">
               <Button variant="secondary" className="w-full justify-start" icon={<Plus size={14} />}>
                 Add Testimonial
               </Button>
