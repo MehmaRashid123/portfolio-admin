@@ -8,7 +8,7 @@ import { signOut, useSession } from 'next-auth/react';
 import {
   LayoutGrid, Sparkles, Users, Quote, FileText,
   Settings, Shield, LogOut, ChevronLeft, ChevronRight,
-  Zap, Menu, X
+  Zap, Menu, X, Link2
 } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 
@@ -28,6 +28,7 @@ const navSections = [
       { label: 'Team', href: '/dashboard/team', icon: <Users size={16} /> },
       { label: 'Testimonials', href: '/dashboard/testimonials', icon: <Quote size={16} /> },
       { label: 'Blog', href: '/dashboard/blog', icon: <FileText size={16} /> },
+      { label: 'Portfolio Links', href: '/dashboard/portfolio-links', icon: <Link2 size={16} /> },
     ] as NavItem[],
   },
   {

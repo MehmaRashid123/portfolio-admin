@@ -14,6 +14,7 @@ import Select from '@/components/ui/Select';
 import Button from '@/components/ui/Button';
 import TagInput from '@/components/ui/TagInput';
 import FileUpload from '@/components/ui/FileUpload';
+import MultiImageUpload from '@/components/ui/MultiImageUpload';
 import RichTextEditor from '@/components/ui/RichTextEditor';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { useToast } from '@/components/ui/Toast';
@@ -22,7 +23,7 @@ import Badge from '@/components/ui/Badge';
 const schema = z.object({
   title: z.string().min(1, 'Title is required'),
   slug: z.string().min(1, 'Slug is required'),
-  category: z.enum(['graphic', 'web', '3d']),
+  category: z.string().min(1, 'Category is required'),
   status: z.enum(['draft', 'published']),
   shortDescription: z.string().max(200).optional(),
   fullDescription: z.string().optional(),
@@ -31,6 +32,7 @@ const schema = z.object({
   year: z.string().optional(),
   tools: z.array(z.string()).optional(),
   thumbnail: z.object({ url: z.string(), publicId: z.string() }).nullable().optional(),
+  images: z.array(z.object({ url: z.string(), publicId: z.string(), order: z.number() })).optional(),
   videoUrl: z.string().optional(),
   featured: z.boolean().optional(),
 });
@@ -52,6 +54,7 @@ export default function ProjectForm({ projectId }: { projectId?: string }) {
   const [loading, setLoading] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [categories, setCategories] = useState<{ value: string; label: string }[]>([]);
   const isEdit = !!projectId;
 
   const {
@@ -69,12 +72,22 @@ export default function ProjectForm({ projectId }: { projectId?: string }) {
       category: 'web',
       tags: [],
       tools: [],
+      images: [],
       featured: false,
     },
   });
 
   const title = watch('title');
   const status = watch('status');
+
+  // Load categories
+  useEffect(() => {
+    fetch('/api/categories')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success) setCategories(d.data.map((c: any) => ({ value: c.slug, label: c.label })));
+      });
+  }, []);
 
   // Auto-slug from title (only on new)
   useEffect(() => {
@@ -161,11 +174,8 @@ export default function ProjectForm({ projectId }: { projectId?: string }) {
                   render={({ field }) => (
                     <Select
                       label="Category *"
-                      options={[
-                        { value: 'graphic', label: 'Graphic Design' },
-                        { value: 'web', label: 'Web Development' },
-                        { value: '3d', label: '3D Art' },
-                      ]}
+                      options={categories}
+                      placeholder="Select category"
                       error={errors.category?.message}
                       {...field}
                     />
@@ -243,6 +253,17 @@ export default function ProjectForm({ projectId }: { projectId?: string }) {
                 control={control}
                 render={({ field }) => (
                   <FileUpload label="Thumbnail *" value={field.value ?? null} onChange={field.onChange} />
+                )}
+              />
+              <Controller
+                name="images"
+                control={control}
+                render={({ field }) => (
+                  <MultiImageUpload
+                    label="Gallery Images"
+                    value={field.value ?? []}
+                    onChange={field.onChange}
+                  />
                 )}
               />
               <Input label="Video URL" {...register('videoUrl')} placeholder="Cloudinary or YouTube URL" />

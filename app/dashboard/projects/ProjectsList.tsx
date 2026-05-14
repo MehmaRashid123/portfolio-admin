@@ -23,13 +23,6 @@ interface Project {
   createdAt: string;
 }
 
-const CATEGORIES = [
-  { value: 'all', label: 'All Categories' },
-  { value: 'graphic', label: 'Graphic Design' },
-  { value: 'web', label: 'Web Development' },
-  { value: '3d', label: '3D Art' },
-];
-
 const SORT_OPTIONS = [
   { value: '-createdAt', label: 'Newest' },
   { value: 'createdAt', label: 'Oldest' },
@@ -43,6 +36,9 @@ export default function ProjectsList() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const [categories, setCategories] = useState<{ value: string; label: string }[]>([
+    { value: 'all', label: 'All Categories' },
+  ]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [page, setPage] = useState(1);
@@ -63,6 +59,20 @@ export default function ProjectsList() {
   }, [category, search]);
 
   useEffect(() => { load(); }, [load]);
+
+  // Load categories for filter
+  useEffect(() => {
+    fetch('/api/categories')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success) {
+          setCategories([
+            { value: 'all', label: 'All Categories' },
+            ...d.data.map((c: any) => ({ value: c.slug, label: c.label })),
+          ]);
+        }
+      });
+  }, []);
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -186,7 +196,7 @@ export default function ProjectsList() {
           />
         </div>
         <Select
-          options={CATEGORIES}
+          options={categories}
           value={category}
           onChange={(e) => { setCategory(e.target.value); setPage(1); }}
           className="w-44"

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { LayoutGrid, FileText, Users, Sparkles, Plus, ArrowRight } from 'lucide-react';
+import { LayoutGrid, FileText, Users, Sparkles, Plus, ArrowRight, Link2 } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 
@@ -12,6 +12,7 @@ interface Stats {
   services: number;
   team: number;
   blog: number;
+  portfolioLinks: number;
 }
 
 interface RecentProject {
@@ -49,10 +50,11 @@ const statCards = [
   { label: 'Services', key: 'services' as keyof Stats, icon: <Sparkles size={20} />, href: '/dashboard/services' },
   { label: 'Team Members', key: 'team' as keyof Stats, icon: <Users size={20} />, href: '/dashboard/team' },
   { label: 'Blog Posts', key: 'blog' as keyof Stats, icon: <FileText size={20} />, href: '/dashboard/blog' },
+  { label: 'Portfolio Links', key: 'portfolioLinks' as keyof Stats, icon: <Link2 size={20} />, href: '/dashboard/portfolio-links' },
 ];
 
 export default function DashboardHome({ userName }: { userName: string }) {
-  const [stats, setStats] = useState<Stats>({ projects: 0, services: 0, team: 0, blog: 0 });
+  const [stats, setStats] = useState<Stats>({ projects: 0, services: 0, team: 0, blog: 0, portfolioLinks: 0 });
   const [recent, setRecent] = useState<RecentProject[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -87,7 +89,7 @@ export default function DashboardHome({ userName }: { userName: string }) {
       </motion.div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {statCards.map((card, i) => (
           <motion.div
             key={card.key}
@@ -178,6 +180,11 @@ export default function DashboardHome({ userName }: { userName: string }) {
             <Link href="/dashboard/testimonials/new">
               <Button variant="secondary" className="w-full justify-start" icon={<Plus size={14} />}>
                 Add Testimonial
+              </Button>
+            </Link>
+            <Link href="/dashboard/portfolio-links/new">
+              <Button variant="secondary" className="w-full justify-start" icon={<Plus size={14} />}>
+                Create Portfolio Link
               </Button>
             </Link>
           </div>

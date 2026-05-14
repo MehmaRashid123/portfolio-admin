@@ -10,6 +10,8 @@ const PUBLIC_GET_ROUTES = [
   '/api/blog',
   '/api/settings',
   '/api/stats',
+  '/api/portfolio-links',
+  '/api/categories',
 ];
 
 export async function middleware(req: NextRequest) {

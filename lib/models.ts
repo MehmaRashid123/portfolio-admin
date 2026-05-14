@@ -1,11 +1,21 @@
 import mongoose, { Schema, model, models } from 'mongoose';
 
+// ─── Category ─────────────────────────────────────────────────────────────
+const CategorySchema = new Schema(
+  {
+    slug: { type: String, required: true, unique: true }, // e.g. "graphic"
+    label: { type: String, required: true },              // e.g. "Graphic Design"
+    order: { type: Number, default: 0 },
+  },
+  { timestamps: true }
+);
+
 // ─── Project ───────────────────────────────────────────────────────────────
 const ProjectSchema = new Schema(
   {
     title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
-    category: { type: String, enum: ['graphic', 'web', '3d'], required: true },
+    category: { type: String, required: true },
     status: { type: String, enum: ['draft', 'published'], default: 'draft' },
     shortDescription: { type: String, maxlength: 200 },
     fullDescription: { type: String },
@@ -25,7 +35,7 @@ const ProjectSchema = new Schema(
 const ServiceSchema = new Schema(
   {
     name: String,
-    slug: { type: String, enum: ['graphic', 'web', '3d'] },
+    slug: { type: String, required: true, unique: true },
     description: String,
     features: [String],
     startingPrice: String,
@@ -247,6 +257,12 @@ const UserSchema = new Schema(
   { timestamps: true }
 );
 
+// In dev, delete stale cached models so schema changes (like removing enums) take effect on hot reload
+if (process.env.NODE_ENV !== 'production') {
+  delete (mongoose as any).models.Service;
+  delete (mongoose as any).models.Category;
+}
+
 export const Project = models.Project || model('Project', ProjectSchema);
 export const Service = models.Service || model('Service', ServiceSchema);
 export const TeamMember = models.TeamMember || model('TeamMember', TeamMemberSchema);
@@ -254,3 +270,27 @@ export const Testimonial = models.Testimonial || model('Testimonial', Testimonia
 export const BlogPost = models.BlogPost || model('BlogPost', BlogPostSchema);
 export const Settings = models.Settings || model('Settings', SettingsSchema);
 export const User = models.User || model('User', UserSchema);
+export const Category = models.Category || model('Category', CategorySchema);
+
+// ─── PortfolioLink ─────────────────────────────────────────────────────────
+const PortfolioLinkSchema = new Schema(
+  {
+    title: { type: String, required: true },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      validate: {
+        validator: (v: string) => /^[a-z0-9-]+$/.test(v),
+        message: 'Slug must be lowercase letters, numbers, and hyphens only',
+      },
+    },
+    projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }],
+    isActive: { type: Boolean, default: true },
+    viewCount: { type: Number, default: 0 },
+    lastViewedAt: Date,
+  },
+  { timestamps: true }
+);
+
+export const PortfolioLink = models.PortfolioLink || model('PortfolioLink', PortfolioLinkSchema);
