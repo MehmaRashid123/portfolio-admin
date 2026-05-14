@@ -19,13 +19,14 @@ export async function PUT(req: NextRequest) {
   try {
     await connectDB();
     const body = await req.json();
-    const settings = await Settings.findOneAndUpdate({}, body, {
-      new: true,
-      upsert: true,
-      runValidators: true,
-    });
+    const settings = await Settings.findOneAndUpdate(
+      {},
+      { $set: body },
+      { new: true, upsert: true }
+    );
     return NextResponse.json({ success: true, data: settings });
-  } catch {
-    return NextResponse.json({ success: false, error: 'Failed to update settings' }, { status: 500 });
+  } catch (err: any) {
+    console.error('[PUT /api/settings]', err);
+    return NextResponse.json({ success: false, error: err?.message || 'Failed to update settings' }, { status: 500 });
   }
 }
