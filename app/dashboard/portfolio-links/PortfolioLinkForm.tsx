@@ -70,8 +70,9 @@ export default function PortfolioLinkForm({ linkId }: { linkId?: string }) {
     fetch('/api/settings')
       .then((r) => r.json())
       .then((d) => {
-        if (d.success && d.data?.frontendUrl) {
-          setFrontendUrl(d.data.frontendUrl.replace(/\/$/, ''));
+        if (d.success) {
+          const url = d.data?.frontendUrl || process.env.NEXT_PUBLIC_FRONTEND_URL || '';
+          setFrontendUrl(url.replace(/\/$/, ''));
         }
       });
   }, []);

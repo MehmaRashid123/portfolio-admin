@@ -89,8 +89,9 @@ export default function PortfolioLinksList() {
       const linksData = await linksRes.json();
       const settingsData = await settingsRes.json();
       if (linksData.success) setLinks(linksData.data);
-      if (settingsData.success && settingsData.data?.frontendUrl) {
-        setFrontendUrl(settingsData.data.frontendUrl.replace(/\/$/, ''));
+      if (settingsData.success) {
+        const url = settingsData.data?.frontendUrl || process.env.NEXT_PUBLIC_FRONTEND_URL || '';
+        setFrontendUrl(url.replace(/\/$/, ''));
       }
     } finally {
       setLoading(false);
