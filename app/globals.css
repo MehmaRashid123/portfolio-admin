@@ -6,17 +6,18 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: #0a0a0a;
-  --bg-surface: #111111;
-  --bg-elevated: #1a1a1a;
-  --text-primary: #ffffff;
-  --text-secondary: #999999;
-  --text-muted: #555555;
-  --accent: #FF4D00;
-  --accent-dim: #FF4D0022;
-  --accent-hover: #FF6B2B;
-  --border: #222222;
-  --border-accent: #FF4D00;
+  --bg-primary: #0d1b2a;
+  --bg-surface: #112236;
+  --bg-elevated: #163050;
+  --text-primary: #e8f4ff;
+  --text-secondary: #7ab3d4;
+  --text-muted: #3d6a8a;
+  --accent: #00d4ff;
+  --accent-2: #7b2fff;
+  --accent-dim: rgba(0, 212, 255, 0.15);
+  --accent-hover: #33ddff;
+  --border: rgba(0, 212, 255, 0.12);
+  --border-accent: #00d4ff;
   --danger: #FF3B3B;
   --success: #22C55E;
 }
@@ -113,9 +114,9 @@ body::before {
   width: 100%;
 }
 
-/* Orange glow */
-.orange-glow {
-  box-shadow: 0 0 20px var(--accent-dim);
+/* Cyan glow */
+.cyan-glow {
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.2), 0 0 40px rgba(123, 47, 255, 0.1);
 }
 
 /* Skeleton animation */
